@@ -1,0 +1,13 @@
+rootProject.name = 'xtion-rest-master'
+include 'xw-core'
+includeFlat 'xw-meta-sdk'
+includeFlat 'xw-ui-sdk'
+/*includeFlat 'xw-role-permission'*/
+
+project(':xw-core').projectDir = new File(settingsDir, '../../XtionMicroService/xw-core')
+project(':xw-meta-sdk').projectDir = new File(settingsDir, '../../Metadata-SDK/xw-meta-sdk')
+project(':xw-ui-sdk').projectDir = new File(settingsDir, '../../Ui-Protocol-SDK/xw-ui-sdk')
+
+/*
+project(':xw-role-permission').projectDir = new File(settingsDir, '../../AuthorizationEngine/xw-role-permission')
+*/

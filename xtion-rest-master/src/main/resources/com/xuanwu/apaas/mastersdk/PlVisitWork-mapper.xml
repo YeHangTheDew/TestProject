@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanwu.apaas.master.domain.PlVisitWork">
+    <select id="insert" parameterType="map">
+      INSERT INTO "public"."pl_visitwork" ("platcreatetime" ,"platupdatetime" ,"platcreateop","platupdateop","platstatus","workid","workname","descr","appcode","refpositionid","status","seq","isdefault","starttime","endtime","rules","settings","createaccountname","updateaccountname")
+      VALUES (#{platcreatetime,jdbcType=TIMESTAMP},
+	  #{platupdatetime,jdbcType=TIMESTAMP},
+	  #{platcreateop,jdbcType=TIMESTAMP},
+	  #{platupdateop,jdbcType=BIGINT},
+	  #{platstatus,jdbcType=INTEGER},
+	  #{workid,jdbcType=BIGINT},
+	  #{workname,jdbcType=BIGINT},
+	  #{descr,jdbcType=BIGINT},
+	  #{appcode,jdbcType=BIGINT},
+	  #{refpositionid,jdbcType=BIGINT},
+	  #{status,jdbcType=INTEGER},
+	  #{seq,jdbcType=INTEGER},
+	  #{isdefault,jdbcType=INTEGER},
+	  #{starttime,jdbcType=TIMESTAMP},
+	  #{endtime,jdbcType=TIMESTAMP},
+	  #{rules,jdbcType=VARCHAR},
+	  #{settings,jdbcType=VARCHAR},
+	  #{createaccountname,jdbcType=VARCHAR},
+	  #{updateaccountname,jdbcType=VARCHAR}
+	  )
+    </select>
+
+    <update id="update" parameterType="map">
+        update pl_visitwork
+        <set>
+            <if test="platcreatetime != null">
+                platcreatetime = #{platcreatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="platupdatetime != null">
+                platupdatetime = #{platupdatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="platcreateop!=null">
+                platcreateop=#{platcreateop,jdbcType=BIGINT},
+            </if>
+            <if test="platupdateop != null">
+                platupdateop = #{platupdateop,jdbcType=BIGINT},
+            </if>
+            <if test="platstatus != null">
+                platstatus = #{platstatus,jdbcType=INTEGER},
+            </if>
+            <if test="workname !=null">
+                workname = #{workname,jdbcType=VARCHAR},
+            </if>
+            <if test="descr !=null">
+                descr = #{descr,jdbcType=VARCHAR},
+            </if>
+            <if test="appcode != null">
+                appcode = #{appcode,jdbcType=BIGINT},
+            </if>
+            <if test="refpositionid != null">
+                refpositionid = #{refpositionid,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="seq != null">
+                seq = #{seq,jdbcType=INTEGER},
+            </if>
+            <if test="isdefault != null">
+                isdefault = #{isdefault,jdbcType=INTEGER},
+            </if>
+            <if test="starttime != null">
+                starttime = #{starttime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endtime != null">
+                endtime = #{endtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="rules != null">
+                rules = #{rules,jdbcType=VARCHAR},
+            </if>
+            <if test="settings != null">
+                settings = #{settings,jdbcType=VARCHAR},
+            </if>
+            <if test="createaccountname != null">
+                createaccountname = #{createaccountname,jdbcType=VARCHAR},
+            </if>
+            <if test="updateaccountname != null">
+                updateaccountname = #{updateaccountname,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where workid = #{workid,jdbcType=BIGINT}
+    </update>
+
+
+
+
+    <select id="list" resultType="map">
+        select workid ||'' as workid,workname,platstatus || '' as platstatus,appcode,platupdatetime||'' as platupdatetime,updateaccountname||'' as updateaccountname
+        from  pl_visitwork
+        where 1=1
+        <if test="workname != null and workname !=''">
+            and workname like CONCAT(CONCAT('%',REPLACE(REPLACE(#{workname}, '%', '/%'), '_', '/_')), '%') ESCAPE '/'
+        </if>
+        <if test="refpositionid != null and refpositionid !=''">
+            and refpositionid =#{refpositionid}
+        </if>
+        <if test="status != null and status !=''">
+            and status =#{status}
+        </if>
+        <if test="pagesize !=null and offset != null">
+            limit #{pagesize} offset #{offset}
+        </if>
+    </select>
+
+    <select id="isExist" resultType="long">
+        select count(1) from pl_visitwork
+        where  workid = #{workid,jdbcType=BIGINT}
+    </select>
+
+    <select id="get" resultType="map">
+        select workid ||'' as workid,workname,descr,appcode,refpositionid ||'' as refpositionid,isdefault ||'' as isdefault ,starttime ||'' as starttime ,endtime ||'' as endtime,rules,settings from pl_visitwork
+        where status='1'
+        <if test="workid != null and workid !=''">
+        and workid=#{workid}
+        </if>
+
+    </select>
+    <select id="listCount" resultType="long">
+        select count(1)
+        from pl_visitwork where 1 = 1
+        <if test="workname != null and workname !=''">
+            and workname=#{workname}
+        </if>
+        <if test="refpositionid != null and refpositionid !=''">
+            and refpositionid =#{refpositionid}
+        </if>
+        <if test="status != null and status !=''">
+            and status =#{status}
+        </if>
+
+    </select>
+    <select id="getPosition" resultType="map">
+        select positionid ||'' as positionid,positionname from pl_position
+        where status='1' and positiontype='2' and appcode='sales' and platstatus='1'
+
+    </select>
+
+</mapper>

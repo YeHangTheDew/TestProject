@@ -1,0 +1,51 @@
+apply from: '../../XtionMicroService/xw-core/config.gradle'
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'idea'
+
+dependencies {
+    compile project(':xw-core')
+    compile project(':xw-meta-sdk')
+    compile project(':xw-ui-sdk')
+/*    compile project(':xw-role-permission')*/
+    compile (
+            'com.xuanwu.apaas:tenantdb-operate:1.0.0-SNAPSHOT',
+            'com.xuanwu.apaas:tenantdb-router:1.0.0-SNAPSHOT',
+    )
+}
+
+repositories {
+    maven {
+        url 'http://172.16.0.143:9999/nexus/content/repositories/apaas-service-sdk-snapshots/'
+    }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE")
+    }
+}
+
+mainClassName = 'com.xuanwu.apaas.master.server.JerseyApplication'
+
+jar {
+    version = '0.1.0'
+    manifest {
+        attributes 'Main-Class': 'com.xuanwu.apaas.master.server.JerseyApplication'
+        attributes 'provider': 'gradle'
+    }
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Properties>
+		<Property name="PID">announcement</Property>
+		<Property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] log4j2%X{context} - ${sys:PID} %5p [%t] --- %c{1}:[%X{traceid}]-[%X{tecode}]-[%X{username}]-[%X{poname}] %m%n</Property>
+		<Property name="FILE_LOG_PATTERN">
+			%d %p %c{1.} [%t] [%X{traceid}]-[%X{tecode}]-[%X{username}]-[%X{poname}] %m%n
+		</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+		<RollingFile name="LogDebugFile" fileName="logs/debug.log"	 filePattern="logs/debug.log.%d{yyyy-MM-dd}.log">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${FILE_LOG_PATTERN}"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="LogInfoFile" fileName="logs/info.log"	 filePattern="logs/info.log.%d{yyyy-MM-dd}.log">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+			<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${FILE_LOG_PATTERN}"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="LogErrorFile" fileName="logs/error.log"	 filePattern="logs/error.log.%d{yyyy-MM-dd}.log">
+			<!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+			<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="${FILE_LOG_PATTERN}"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
+		<logger name="org.springframework" level="INFO"></logger>
+		<logger name="org.mybatis" level="INFO"></logger>
+		<logger name="org.apache.http" level="INFO"></logger>
+
+		<Root level="debug">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="LogDebugFile" />
+			<AppenderRef ref="LogInfoFile" />
+			<AppenderRef ref="LogErrorFile" />
+		</Root>
+	</Loggers>
+</Configuration>

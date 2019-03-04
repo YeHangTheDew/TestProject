@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanwu.apaas.master.domain.PlSceneCase">
+
+    <insert id="insert" parameterType="map">
+        INSERT INTO "public"."pl_scenecase" ("casecode", "templatecode", "casename", "casedescr","contextjson", "mappingjson", "uimap", "status","publishstatus","createtime","updatetime","createaccountname","updateaccountname")
+        VALUES (#{casecode,jdbcType=BIGINT},
+            #{templatecode,jdbcType=BIGINT},
+            #{casename,jdbcType=VARCHAR},
+            #{casedescr,jdbcType=VARCHAR},
+            #{contextjson,jdbcType=VARCHAR},
+            #{mappingjson,jdbcType=BIGINT},
+            #{uimap,jdbcType=VARCHAR},
+            #{status,jdbcType=BIGINT},
+            #{publishstatus,jdbcType=BIGINT},
+            #{createtime,jdbcType=TIMESTAMP},
+            #{updatetime,jdbcType=TIMESTAMP},
+            #{createaccountname,jdbcType=VARCHAR},
+            #{updateaccountname,jdbcType=VARCHAR}
+              )
+
+    </insert>
+
+    <update id="update" parameterType="map">
+        update pl_scenecase
+        <set>
+            <if test="templatecode != null">
+                templatecode = #{templatecode,jdbcType=INTEGER},
+            </if>
+            <if test="casename != null">
+                casename = #{casename,jdbcType=VARCHAR},
+            </if>
+            <if test="casedescr != null">
+                casedescr = #{casedescr,jdbcType=VARCHAR},
+            </if>
+            <if test="contextjson != null">
+                contextjson = #{contextjson,jdbcType=VARCHAR},
+            </if>
+            <if test="mappingjson != null">
+                mappingjson = #{mappingjson,jdbcType=VARCHAR},
+            </if>
+            <if test="uimap !=null">
+                uimap = #{uimap,jdbcType=BIGINT},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="publishstatus != null">
+                publishstatus = #{publishstatus,jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createaccountname != null">
+                createaccountname = #{createaccountname,jdbcType=VARCHAR},
+            </if>
+            <if test="updateaccountname != null">
+                updateaccountname = #{updateaccountname,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where casecode = #{casecode,jdbcType=BIGINT}
+    </update>
+
+    <select id="isExistName" resultType="long">
+        select count(*) from pl_scenecase
+        where status = 1
+        and casename = #{casename,jdbcType=VARCHAR}
+        <if test="casecode != null and casecode != ''">
+            and casecode &lt;&gt; #{casecode,jdbcType=BIGINT}
+        </if>
+    </select>
+
+    <select id="isExist" resultType="long">
+        select count(*) from pl_scenecase
+        where  casecode = #{casecode,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="list" resultType="map">
+        select a.casecode ||'' as casecode ,a.templatecode ||'' as templatecode, a.casename,a.casedescr,a.contextjson,a.publishstatus ||'' as publishstatus, a.updatetime,b.updateaccountname,b.name,b.category ||'' as category,b.categoryname,a.publishstatus
+        from  pl_scenecase a inner join pl_scenetemplate b
+        on a.templatecode=b.templatecode
+        <if test="casename != null and casename !=''">
+            and casename like CONCAT(CONCAT('%',REPLACE(REPLACE(#{casename}, '%', '/%'), '_', '/_')), '%') ESCAPE '/'
+        </if>
+        <if test="publishstatus != null and publishstatus !=''">
+            and publishstatus=#{publishstatus,jdbcType=INTEGER}
+        </if>
+        <if test="pagesize !=null and offset != null">
+            limit #{pagesize} offset #{offset}
+        </if>
+    </select>
+
+    <select id="listCount" resultType="long">
+        select count(1)
+        from pl_scenecase where status = 1
+
+        <if test="name != null and name !=''">
+            and casename like CONCAT(CONCAT('%',REPLACE(REPLACE(#{casename}, '%', '/%'), '_', '/_')), '%') ESCAPE '/'
+        </if>
+
+    </select>
+
+
+    <select id="get" resultType="map">
+        select
+        casecode || '' as "casecode", templatecode || '' as "templatecode", casename, casedescr,contextjson, mappingjson, uimap, status || '' as "status",publishstatus || '' as "publishstatus",
+        createtime ||'' as createtime,updatetime ||'' as updatetime,createaccountname,updateaccountname from pl_scenecase where casecode=#{casecode,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="isExistGrantFunction" resultType="long">
+        select count(*) from pl_grantfunction
+        where  grantfunctioncode = #{grantfunctioncode,jdbcType=BIGINT}
+
+    </select>
+
+
+    <select id="isSigelGrantFunction" resultType="long">
+        select count(*) from pl_grantfunction
+        where  grantfunctioncode = #{grantfunctioncode,jdbcType=BIGINT} and productcode= #{productcode,jdbcType=BIGINT}
+
+    </select>
+
+    <select id="isExistAssignFunction" resultType="long">
+        select count(*) from pl_assignfunction
+        where  grantfunctioncode = #{grantfunctioncode,jdbcType=BIGINT} and functioncode= #{functioncode,jdbcType=BIGINT}
+
+    </select>
+
+    <select id="isExistPageNavigation" resultType="long">
+        select count(*) from pl_pagenavigation
+        where  id = #{id,jdbcType=BIGINT}
+
+    </select>
+
+    <select id="isSinglePageNavigation" resultType="long">
+        select count(*) from pl_pagenavigation
+        where  parentid = #{parentid,jdbcType=BIGINT} and datacode=#{datacode,jdbcType=BIGINT}
+
+    </select>
+
+    <select id="getMaxSeqGrantFunction" resultType="java.lang.Integer">
+      select coalesce(max(seq),0) + 1 from pl_grantfunction
+      where productcode = #{productcode,jdbcType=BIGINT}
+      and clientcategory = #{clientcategory,jdbcType=INTEGER}
+  </select>
+
+
+    <insert id="insertGrantFunction" parameterType="map">
+    insert into pl_grantfunction (grantfunctioncode, grantfunctionname,productcode, grantfunctiondescr, seq,
+      status, clientcategory, createop, updateop, createtime, updatetime,parentgrantfunctioncode,functiondefid, markcode,marktype)
+    values (#{grantfunctioncode,jdbcType=BIGINT}, #{grantfunctionname,jdbcType=VARCHAR},
+      #{productcode,jdbcType=BIGINT}, #{grantfunctiondescr,jdbcType=VARCHAR}, #{seq,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{clientcategory,jdbcType=INTEGER},
+      #{createop,jdbcType=BIGINT}, #{updateop,jdbcType=BIGINT}, #{createtime,jdbcType=TIMESTAMP},#{updatetime,jdbcType=TIMESTAMP},
+      #{parentgrantfunctioncode,jdbcType=BIGINT}, #{functiondefid,jdbcType=BIGINT},#{markcode,jdbcType=VARCHAR}, #{marktype,jdbcType=INTEGER})
+  </insert>
+    <update id="updateGrantFunction" parameterType="map">
+        update pl_grantfunction
+        <set>
+            <if test="grantfunctionname != null">
+                grantfunctionname = #{grantfunctionname,jdbcType=VARCHAR},
+            </if>
+            <if test="productcode != null">
+                productcode = #{productcode,jdbcType=BIGINT},
+            </if>
+            <if test="grantfunctiondescr != null">
+                grantfunctiondescr = #{grantfunctiondescr,jdbcType=VARCHAR},
+            </if>
+            <if test="seq != null">
+                seq = #{seq,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="clientcategory != null">
+                clientcategory = #{clientcategory,jdbcType=INTEGER},
+            </if>
+            <if test="updateop != null">
+                updateop = #{updateop,jdbcType=BIGINT},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentgrantfunctioncode != null">
+                parentgrantfunctioncode = #{parentgrantfunctioncode,jdbcType=BIGINT},
+            </if>
+            <if test="functiondefid != null">
+                functiondefid = #{functiondefid,jdbcType=BIGINT},
+            </if>
+            <if test="markcode != null">
+                markcode = #{markcode,jdbcType=VARCHAR},
+            </if>
+            <if test="marktype != null">
+                marktype = #{marktype,jdbcType=INTEGER}
+            </if>
+        </set>
+        where grantfunctioncode = #{grantfunctioncode,jdbcType=BIGINT}
+    </update>
+
+
+
+    <insert id="insertAssignFunction" parameterType="map">
+        insert into pl_assignfunction (assignfunctioncode, grantfunctioncode, functioncode, pagecode, metaobjectcode,
+        functioncategory, createop, updateop, createtime, updatetime) values
+            (#{assignfunctioncode,jdbcType=BIGINT}, #{grantfunctioncode,jdbcType=BIGINT},
+            #{functioncode,jdbcType=BIGINT}, #{pagecode,jdbcType=BIGINT}, #{metaobjectcode,jdbcType=BIGINT},
+            #{functioncategory,jdbcType=INTEGER}, #{createop,jdbcType=BIGINT}, #{updateop,jdbcType=BIGINT},
+            #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateAssignFunction" parameterType="map">
+        update pl_grantfunction
+        <set>
+            <if test="grantfunctionname != null">
+                grantfunctionname = #{grantfunctionname,jdbcType=VARCHAR},
+            </if>
+            <if test="productcode != null">
+                productcode = #{productcode,jdbcType=BIGINT},
+            </if>
+            <if test="grantfunctiondescr != null">
+                grantfunctiondescr = #{grantfunctiondescr,jdbcType=VARCHAR},
+            </if>
+            <if test="seq != null">
+                seq = #{seq,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="clientcategory != null">
+                clientcategory = #{clientcategory,jdbcType=INTEGER},
+            </if>
+            <if test="updateop != null">
+                updateop = #{updateop,jdbcType=BIGINT},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentgrantfunctioncode != null">
+                parentgrantfunctioncode = #{parentgrantfunctioncode,jdbcType=BIGINT},
+            </if>
+            <if test="functiondefid != null">
+                functiondefid = #{functiondefid,jdbcType=BIGINT},
+            </if>
+            <if test="markcode != null">
+                markcode = #{markcode,jdbcType=VARCHAR},
+            </if>
+            <if test="marktype != null">
+                marktype = #{marktype,jdbcType=INTEGER}
+            </if>
+        </set>
+        where grantfunctioncode = #{grantfunctioncode,jdbcType=BIGINT}
+    </update>
+
+
+    <insert id="insertPageNavigation" parameterType="map">
+
+        INSERT INTO "pl_pagenavigation"
+        ("platcreatetime", "platupdatetime", "platcreateop", "platupdateop", "platstatus", "id", "parentid", "title", "category","bizdimensionid", "datacode", "pagecode", "description", "key", "keypath", "seq", "icon", "clientcategory", "functioncode","submitevent", "expression", "status", "level", "marktype", "functiondefid") VALUES (
+            #{platcreatetime,jdbcType=TIMESTAMP},
+             #{platupdatetime,jdbcType=TIMESTAMP},
+             #{platcreateop,jdbcType=BIGINT},
+             #{platupdateop,jdbcType=BIGINT},
+             #{platstatus,jdbcType=BIGINT},
+             #{id,jdbcType=BIGINT},
+             #{parentid,jdbcType=BIGINT},
+             #{title,jdbcType=VARCHAR},
+             #{category,jdbcType=BIGINT},
+             #{bizdimensionid,jdbcType=BIGINT},
+             #{datacode,jdbcType=BIGINT},
+             #{pagecode,jdbcType=VARCHAR},
+             #{description,jdbcType=VARCHAR},
+             #{key,jdbcType=VARCHAR},
+             #{keypath,jdbcType=VARCHAR},
+             #{seq,jdbcType=BIGINT},
+             #{icon,jdbcType=VARCHAR},
+             #{clientcategory,jdbcType=BIGINT},
+             #{functioncode,jdbcType=BIGINT},
+             #{submitevent,jdbcType=VARCHAR},
+             #{expression,jdbcType=VARCHAR},
+             #{status,jdbcType=BIGINT},
+             #{level,jdbcType=BIGINT},
+             #{marktype,jdbcType=BIGINT},
+             #{functiondefid,jdbcType=BIGINT})
+    </insert>
+
+
+    <select id="getFunctiondefid" resultType="long">
+        select functiondefid from
+        pl_functiondef
+        where  status='1'
+        <if test="appcode != null">
+            AND appcode = #{appcode,jdbcType=INTEGER}
+        </if>
+
+    </select>
+
+    <select id="getPageNavigation" parameterType="map" resultType="map">
+        select keypath
+
+        from pl_pagenavigation
+        where platstatus = 1 and status = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+    </select>
+
+    <select id="getMaxSeqPageNavigation" resultType="java.lang.Integer">
+        select coalesce(max(seq),0) + 1 from pl_pagenavigation
+        <if test="id != null and id != ''">
+            where id = #{id}
+        </if>
+    </select>
+
+
+
+
+</mapper>

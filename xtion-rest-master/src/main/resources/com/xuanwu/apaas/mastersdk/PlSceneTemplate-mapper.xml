@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanwu.apaas.master.domain.PlSceneTemplate">
+    <insert id="insert" parameterType="map">
+        INSERT INTO "public"."pl_scenetemplate" ("templatecode", "name", "descr", "mappingjson","objectjson", "logicjson", "uijson", "category","categoryname","contextjson", "status", "seq","createtime","updatetime","createaccountname","updateaccountname")
+        VALUES (#{templatecode,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{descr,jdbcType=VARCHAR},
+          #{mappingjson,jdbcType=VARCHAR},
+          #{objectjson,jdbcType=VARCHAR},
+           #{logicjson,jdbcType=VARCHAR},
+            #{uijson,jdbcType=VARCHAR},
+             #{category,jdbcType=BIGINT},
+            #{categoryname,jdbcType=VARCHAR},
+             #{contextjson,jdbcType=VARCHAR},
+             #{status,jdbcType=INTEGER},
+             #{seq,jdbcType=INTEGER},
+             #{createtime,jdbcType=TIMESTAMP},
+              #{updatetime,jdbcType=TIMESTAMP},
+              #{createaccountname,jdbcType=VARCHAR},
+              #{updateaccountname,jdbcType=VARCHAR}
+              )
+
+
+    </insert>
+
+    <update id="update" parameterType="map">
+        update pl_scenetemplate
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="descr != null">
+                descr = #{descr,jdbcType=VARCHAR},
+            </if>
+            <if test="mappingjson!=null">
+                mappingjson=#{mappingjson,jdbcType=VARCHAR},
+            </if>
+            <if test="objectjson != null">
+                objectjson = #{objectjson,jdbcType=VARCHAR},
+            </if>
+            <if test="logicjson != null">
+                logicjson = #{logicjson,jdbcType=VARCHAR},
+            </if>
+            <if test="uijson != null">
+                uijson = #{uijson,jdbcType=VARCHAR},
+            </if>
+            <if test="category !=null">
+                category = #{category,jdbcType=BIGINT},
+            </if>
+            <if test="categoryname !=null">
+                categoryname = #{categoryname,jdbcType=VARCHAR},
+            </if>
+
+            <if test="contextjson != null">
+                contextjson = #{contextjson,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="seq != null">
+                seq = #{seq,jdbcType=INTEGER},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatetime != null">
+                updatetime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createaccountname != null">
+                createaccountname = #{createaccountname,jdbcType=VARCHAR},
+            </if>
+            <if test="updateaccountname != null">
+                updateaccountname = #{updateaccountname,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where templatecode = #{templatecode,jdbcType=BIGINT}
+    </update>
+
+    <select id="isExistName" resultType="long">
+        select count(*) from pl_scenetemplate
+        where status = 1
+        and name = #{name,jdbcType=VARCHAR}
+        <if test="templatecode != null and templatecode != ''">
+            and templatecode &lt;&gt; #{templatecode,jdbcType=BIGINT}
+        </if>
+    </select>
+
+    <select id="isExist" resultType="long">
+        select count(*) from pl_scenetemplate
+        where  templatecode = #{templatecode,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="list" resultType="map">
+        select templatecode || '' as "templatecode",name, descr, status || '' as "status", seq || '' as "seq"
+        from pl_scenetemplate where status = 1
+
+        <if test="name != null and name !=''">
+            and name like CONCAT(CONCAT('%',REPLACE(REPLACE(#{name}, '%', '/%'), '_', '/_')), '%') ESCAPE '/'
+        </if>
+        order by seq asc
+
+        <if test="pagesize !=null and offset != null">
+            limit #{pagesize} offset #{offset}
+        </if>
+    </select>
+
+    <select id="listCount" resultType="long">
+        select count(1)
+        from pl_scenetemplate where status = 1
+
+        <if test="name != null and name !=''">
+            and name like CONCAT(CONCAT('%',REPLACE(REPLACE(#{name}, '%', '/%'), '_', '/_')), '%') ESCAPE '/'
+        </if>
+
+    </select>
+
+
+    <select id="get" resultType="map">
+        select templatecode || '' as "templatecode",name, descr, status || '' as "status", seq || '' as "seq",
+        objectjson, logicjson,uijson, contextjson ,mappingjson,category ||'' as "category",categoryname,createtime||'' as createtime,updatetime ||''as updatetime,createaccountname,updateaccountname
+        from pl_scenetemplate
+        where templatecode = #{templatecode,jdbcType=BIGINT}
+    </select>
+
+    <select id="getByCategory" resultType="map">
+        select templatecode || '' as "templatecode",name
+        from pl_scenetemplate
+        where category=#{category,jdbcType=BIGINT}
+        <if test="categoryname !=null and categoryname !=''">
+            and categoryname=#{categoryname,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <select id="getByCategoryCount" resultType="long">
+        select count(1)
+        from pl_scenetemplate
+        where category=#{category,jdbcType=BIGINT}
+        <if test="categoryname !=null and categoryname !=''">
+            and categoryname=#{categoryname,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <update id="delete">
+        update pl_scenetemplate set status = 3 where 1=1
+
+        <if test="templatecode != null">
+            and templatecode = #{templatecode}
+        </if>
+
+        <if test="templatecodes != null and templatecodes != ''">
+            and templatecode in (${templatecodes})
+        </if>
+    </update>
+
+</mapper>

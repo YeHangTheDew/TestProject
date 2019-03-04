@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanwu.apaas.master.domain.PlVisitWorkStep">
+    <select id="insert" parameterType="map">
+         INSERT INTO "public"."pl_visitworkstep" ("platcreatetime" ,"platupdatetime" ,"platcreateop","platupdateop","platstatus","stepid","workid","stepname","casecode","uimap","status","seq","starttime","endtime","category" ,"categoryname","rules","settings")
+      VALUES (#{platcreatetime,jdbcType=TIMESTAMP},
+	  #{platupdatetime,jdbcType=TIMESTAMP},
+	  #{platcreateop,jdbcType=BIGINT},
+	  #{platupdateop,jdbcType=BIGINT},
+	  #{platstatus,jdbcType=INTEGER},
+	  #{stepid,jdbcType=BIGINT},
+	  #{workid,jdbcType=BIGINT},
+	  #{stepname,jdbcType=VARCHAR},
+	  #{casecode,jdbcType=BIGINT},
+	  #{uimap,jdbcType=VARCHAR},
+	  #{status,jdbcType=INTEGER},
+	  #{seq,jdbcType=INTEGER},
+	  #{starttime,jdbcType=TIMESTAMP},
+	  #{endtime,jdbcType=TIMESTAMP},
+	  #{category,jdbcType=INTEGER},
+	  #{categoryname,jdbcType=VARCHAR},
+	  #{rules,jdbcType=VARCHAR},
+	  #{settings,jdbcType=VARCHAR}
+	  )
+    </select>
+	<update id="update" parameterType="map">
+		update pl_visitworkstep
+		<set>
+			<if test="platcreatetime != null">
+				platcreatetime = #{platcreatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="platupdatetime != null">
+				platupdatetime = #{platupdatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="platcreateop!=null">
+				platcreateop=#{platcreateop,jdbcType=BIGINT},
+			</if>
+			<if test="platupdateop != null">
+				platupdateop = #{platupdateop,jdbcType=BIGINT},
+			</if>
+			<if test="platstatus != null">
+				platstatus = #{platstatus,jdbcType=INTEGER},
+			</if>
+			<if test="workid != null">
+				workid = #{workid,jdbcType=BIGINT},
+			</if>
+			<if test="stepname !=null">
+				stepname = #{stepname,jdbcType=VARCHAR},
+			</if>
+			<if test="casecode != null">
+				casecode = #{casecode,jdbcType=BIGINT},
+			</if>
+			<if test="uimap != null">
+				uimap = #{uimap,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="seq != null">
+				seq = #{seq,jdbcType=INTEGER},
+			</if>
+			<if test="starttime != null">
+				starttime = #{starttime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endtime != null">
+				endtime = #{endtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rules != null">
+				rules = #{rules,jdbcType=VARCHAR},
+			</if>
+			<if test="category != null">
+				category = #{category,jdbcType=INTEGER},
+			</if>
+
+			<if test="categoryname != null">
+				categoryname = #{categoryname,jdbcType=VARCHAR},
+			</if>
+			<if test="settings != null">
+				settings = #{settings,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where stepid = #{stepid,jdbcType=BIGINT}
+	</update>
+
+    <select id="getList" resultType="map">
+        select  stepid ||'' as stepid,workid || '' as workid,stepname,casecode ||'' as casecode,uimap,seq||'' as seq,settings,starttime||'' as starttime,endtime||'' as endtime  from pl_visitworkstep
+        where platstatus='1' and status='1'
+    <if test="workid != null and workid !=''">
+        and  workid=#{workid}
+    </if>
+
+    </select>
+	<select id="isExist" resultType="long">
+        select count(1) from pl_visitworkstep
+        where  stepid = #{stepid,jdbcType=BIGINT}
+    </select>
+
+</mapper>
